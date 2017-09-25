@@ -1,0 +1,679 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bgColor"
+    android:orientation="vertical"
+    android:weightSum="2">
+
+    <LinearLayout
+        android:id="@+id/llBalance"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="16dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:weightSum="5">
+
+        <TextView
+            android:id="@+id/lblBalance"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/cap_balance"
+            android:textSize="50sp" />
+
+        <LinearLayout
+            android:id="@+id/llActualBalance"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:layout_margin="24dp"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/lblBalCentinaia"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="@string/cap_controller_digit_default"
+                android:textSize="42sp" />
+
+            <TextView
+                android:id="@+id/lblBalDecine"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="@string/cap_controller_digit_default"
+                android:textSize="42sp" />
+
+            <TextView
+                android:id="@+id/lblBalUnita"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="@string/cap_controller_digit_default"
+                android:textSize="42sp" />
+
+            <TextView
+                android:id="@+id/lblBalDot"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="@string/cap_separator"
+                android:textSize="42sp" />
+
+            <TextView
+                android:id="@+id/lblBalDecimi"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="@string/cap_controller_digit_default"
+                android:textSize="42sp" />
+
+            <TextView
+                android:id="@+id/lblBalCentesimi"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="@string/cap_controller_digit_default"
+                android:textSize="42sp" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/llOther"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:baselineAligned="false"
+        android:orientation="horizontal"
+        android:weightSum="2">
+
+        <LinearLayout
+            android:id="@+id/llPaid"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="8dp"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:weightSum="5">
+
+            <TextView
+                android:id="@+id/lblPaid"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="@string/cap_paid"
+                android:textSize="36sp" />
+
+            <LinearLayout
+                android:id="@+id/llPaidController"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="3"
+                android:baselineAligned="false"
+                android:orientation="horizontal"
+                android:weightSum="6">
+
+                <LinearLayout
+                    android:id="@+id/llPayCentinaia"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:weightSum="3">
+
+                    <Button
+                        android:id="@+id/btnPayAddCentinaia"
+                        android:layout_width="match_parent"
+                        android:layout_height="36dp"
+                        android:layout_weight="1"
+                        android:background="@color/bgctrlColor"
+                        android:gravity="center"
+                        android:text="@string/cap_plus"
+                        android:visibility="invisible"
+                        tools:layout_editor_absoluteX="8dp"
+                        tools:layout_editor_absoluteY="8dp" />
+
+                    <TextView
+                        android:id="@+id/lblPayCentinaia"
+                        android:layout_width="match_parent"
+                        android:layout_height="36dp"
+                        android:layout_gravity="center"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="@string/cap_controller_digit_default"
+                        android:textSize="30sp" />
+
+                    <Button
+                        android:id="@+id/btnPayRemCentinaia"
+                        android:layout_width="match_parent"
+                        android:layout_height="36dp"
+                        android:layout_weight="1"
+                        android:background="@color/bgctrlColor"
+                        android:gravity="center"
+                        android:text="@string/cap_minus"
+                        android:visibility="invisible"
+                        tools:layout_editor_absoluteX="8dp"
+                        tools:layout_editor_absoluteY="8dp" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/llPayDecine"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:weightSum="3">
+
+                    <Button
+                        android:id="@+id/btnPayAddDecine"
+                        android:layout_width="match_parent"
+                        android:layout_height="36dp"
+                        android:layout_weight="1"
+                        android:background="@color/bgctrlColor"
+                        android:gravity="center"
+                        android:text="@string/cap_plus"
+                        android:visibility="invisible"
+                        tools:layout_editor_absoluteX="8dp"
+                        tools:layout_editor_absoluteY="8dp" />
+
+                    <TextView
+                        android:id="@+id/lblPayDecine"
+                        android:layout_width="match_parent"
+                        android:layout_height="36dp"
+                        android:layout_gravity="center"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="@string/cap_controller_digit_default"
+                        android:textSize="30sp" />
+
+                    <Button
+                        android:id="@+id/btnPayRemDecine"
+                        android:layout_width="match_parent"
+                        android:layout_height="36dp"
+                        android:layout_weight="1"
+                        android:background="@color/bgctrlColor"
+                        android:gravity="center"
+                        android:text="@string/cap_minus"
+                        android:visibility="invisible"
+                        tools:layout_editor_absoluteX="8dp"
+                        tools:layout_editor_absoluteY="8dp" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/llPayUnita"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:weightSum="3">
+
+                    <Button
+                        android:id="@+id/btnPayAddUnita"
+                        android:layout_width="match_parent"
+                        android:layout_height="36dp"
+                        android:layout_weight="1"
+                        android:background="@color/bgctrlColor"
+                        android:gravity="center"
+                        android:text="@string/cap_plus"
+                        android:visibility="invisible"
+                        tools:layout_editor_absoluteX="8dp"
+                        tools:layout_editor_absoluteY="8dp" />
+
+                    <TextView
+                        android:id="@+id/lblPayUnita"
+                        android:layout_width="match_parent"
+                        android:layout_height="36dp"
+                        android:layout_gravity="center"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="@string/cap_controller_digit_default"
+                        android:textSize="30sp" />
+
+                    <Button
+                        android:id="@+id/btnPayRemUnita"
+                        android:layout_width="match_parent"
+                        android:layout_height="36dp"
+                        android:layout_weight="1"
+                        android:background="@color/bgctrlColor"
+                        android:gravity="center"
+                        android:text="@string/cap_minus"
+                        android:visibility="invisible"
+                        tools:layout_editor_absoluteX="8dp"
+                        tools:layout_editor_absoluteY="8dp" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/llPayDot"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/lblPayDot"
+                        android:layout_width="match_parent"
+                        android:layout_height="36dp"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:text="@string/cap_separator"
+                        android:textSize="30sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/llPayDecimi"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:weightSum="3">
+
+                    <Button
+                        android:id="@+id/btnPayAddDecimi"
+                        android:layout_width="match_parent"
+                        android:layout_height="36dp"
+                        android:layout_weight="1"
+                        android:background="@color/bgctrlColor"
+                        android:gravity="center"
+                        android:text="@string/cap_plus"
+                        android:visibility="invisible"
+                        tools:layout_editor_absoluteX="8dp"
+                        tools:layout_editor_absoluteY="8dp" />
+
+                    <TextView
+                        android:id="@+id/lblPayDecimi"
+                        android:layout_width="match_parent"
+                        android:layout_height="36dp"
+                        android:layout_gravity="center"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="@string/cap_controller_digit_default"
+                        android:textSize="30sp" />
+
+                    <Button
+                        android:id="@+id/btnPayRemDecimi"
+                        android:layout_width="match_parent"
+                        android:layout_height="36dp"
+                        android:layout_weight="1"
+                        android:background="@color/bgctrlColor"
+                        android:gravity="center"
+                        android:text="@string/cap_minus"
+                        android:visibility="invisible"
+                        tools:layout_editor_absoluteX="8dp"
+                        tools:layout_editor_absoluteY="8dp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/llPayCentesimi"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:weightSum="3">
+
+                    <Button
+                        android:id="@+id/btnPayAddCentesimi"
+                        android:layout_width="match_parent"
+                        android:layout_height="36dp"
+                        android:layout_weight="1"
+                        android:background="@color/bgctrlColor"
+                        android:gravity="center"
+                        android:text="@string/cap_plus"
+                        android:visibility="invisible"
+                        tools:layout_editor_absoluteX="8dp"
+                        tools:layout_editor_absoluteY="8dp" />
+
+                    <TextView
+                        android:id="@+id/lblPayCentesimi"
+                        android:layout_width="match_parent"
+                        android:layout_height="36dp"
+                        android:layout_gravity="center"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="@string/cap_controller_digit_default"
+                        android:textSize="30sp" />
+
+                    <Button
+                        android:id="@+id/btnPayRemCentesimi"
+                        android:layout_width="match_parent"
+                        android:layout_height="36dp"
+                        android:layout_weight="1"
+                        android:background="@color/bgctrlColor"
+                        android:gravity="center"
+                        android:text="@string/cap_minus"
+                        android:visibility="invisible"
+                        tools:layout_editor_absoluteX="8dp"
+                        tools:layout_editor_absoluteY="8dp" />
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/btnAddPaid"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:layout_marginBottom="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_weight="1"
+                android:text="@string/cap_pay"
+                android:background="@color/bgctrlColor"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/llWinning"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="8dp"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:weightSum="5">
+
+            <TextView
+                android:id="@+id/lblWon"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="@string/cap_won"
+                android:textSize="36sp" />
+
+            <LinearLayout
+                android:id="@+id/llWonController"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="3"
+                android:baselineAligned="false"
+                android:orientation="horizontal"
+                android:weightSum="6">
+
+                <LinearLayout
+                    android:id="@+id/llWinCentinaia"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:weightSum="3">
+
+                    <Button
+                        android:id="@+id/btnWinAddCentinaia"
+                        android:layout_width="match_parent"
+                        android:layout_height="36dp"
+                        android:layout_weight="1"
+                        android:background="@color/bgctrlColor"
+                        android:gravity="center"
+                        android:text="@string/cap_plus"
+                        android:visibility="invisible"
+                        tools:layout_editor_absoluteX="8dp"
+                        tools:layout_editor_absoluteY="8dp" />
+
+                    <TextView
+                        android:id="@+id/lblWinCentinaia"
+                        android:layout_width="match_parent"
+                        android:layout_height="36dp"
+                        android:layout_gravity="center"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="@string/cap_controller_digit_default"
+                        android:textSize="30sp" />
+
+                    <Button
+                        android:id="@+id/btnWinRemCentinaia"
+                        android:layout_width="match_parent"
+                        android:layout_height="36dp"
+                        android:layout_weight="1"
+                        android:background="@color/bgctrlColor"
+                        android:gravity="center"
+                        android:text="@string/cap_minus"
+                        android:visibility="invisible"
+                        tools:layout_editor_absoluteX="8dp"
+                        tools:layout_editor_absoluteY="8dp" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/llWinDecine"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:weightSum="3">
+
+                    <Button
+                        android:id="@+id/btnWinAddDecine"
+                        android:layout_width="match_parent"
+                        android:layout_height="36dp"
+                        android:layout_weight="1"
+                        android:background="@color/bgctrlColor"
+                        android:gravity="center"
+                        android:text="@string/cap_plus"
+                        android:visibility="invisible"
+                        tools:layout_editor_absoluteX="8dp"
+                        tools:layout_editor_absoluteY="8dp" />
+
+                    <TextView
+                        android:id="@+id/lblWinDecine"
+                        android:layout_width="match_parent"
+                        android:layout_height="36dp"
+                        android:layout_gravity="center"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="@string/cap_controller_digit_default"
+                        android:textSize="30sp" />
+
+                    <Button
+                        android:id="@+id/btnWinRemDecine"
+                        android:layout_width="match_parent"
+                        android:layout_height="36dp"
+                        android:layout_weight="1"
+                        android:background="@color/bgctrlColor"
+                        android:gravity="center"
+                        android:text="@string/cap_minus"
+                        android:visibility="invisible"
+                        tools:layout_editor_absoluteX="8dp"
+                        tools:layout_editor_absoluteY="8dp" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/llWinUnita"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:weightSum="3">
+
+                    <Button
+                        android:id="@+id/btnWinAddUnita"
+                        android:layout_width="match_parent"
+                        android:layout_height="36dp"
+                        android:layout_weight="1"
+                        android:background="@color/bgctrlColor"
+                        android:gravity="center"
+                        android:text="@string/cap_plus"
+                        android:visibility="invisible"
+                        tools:layout_editor_absoluteX="8dp"
+                        tools:layout_editor_absoluteY="8dp" />
+
+                    <TextView
+                        android:id="@+id/lblWinUnita"
+                        android:layout_width="match_parent"
+                        android:layout_height="36dp"
+                        android:layout_gravity="center"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="@string/cap_controller_digit_default"
+                        android:textSize="30sp" />
+
+                    <Button
+                        android:id="@+id/btnWinRemUnita"
+                        android:layout_width="match_parent"
+                        android:layout_height="36dp"
+                        android:layout_weight="1"
+                        android:background="@color/bgctrlColor"
+                        android:gravity="center"
+                        android:text="@string/cap_minus"
+                        android:visibility="invisible"
+                        tools:layout_editor_absoluteX="8dp"
+                        tools:layout_editor_absoluteY="8dp" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/llWinDot"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/lblWinDot"
+                        android:layout_width="match_parent"
+                        android:layout_height="36dp"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:text="@string/cap_separator"
+                        android:textSize="30sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/llWinDecimi"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:weightSum="3">
+
+                    <Button
+                        android:id="@+id/btnWinAddDecimi"
+                        android:layout_width="match_parent"
+                        android:layout_height="36dp"
+                        android:layout_weight="1"
+                        android:background="@color/bgctrlColor"
+                        android:gravity="center"
+                        android:text="@string/cap_plus"
+                        android:visibility="invisible"
+                        tools:layout_editor_absoluteX="8dp"
+                        tools:layout_editor_absoluteY="8dp" />
+
+                    <TextView
+                        android:id="@+id/lblWinDecimi"
+                        android:layout_width="match_parent"
+                        android:layout_height="36dp"
+                        android:layout_gravity="center"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="@string/cap_controller_digit_default"
+                        android:textSize="30sp" />
+
+                    <Button
+                        android:id="@+id/btnWinRemDecimi"
+                        android:layout_width="match_parent"
+                        android:layout_height="36dp"
+                        android:layout_weight="1"
+                        android:background="@color/bgctrlColor"
+                        android:gravity="center"
+                        android:text="@string/cap_minus"
+                        android:visibility="invisible"
+                        tools:layout_editor_absoluteX="8dp"
+                        tools:layout_editor_absoluteY="8dp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/llWinCentesimi"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:weightSum="3">
+
+                    <Button
+                        android:id="@+id/btnWinAddCentesimi"
+                        android:layout_width="match_parent"
+                        android:layout_height="36dp"
+                        android:layout_weight="1"
+                        android:background="@color/bgctrlColor"
+                        android:gravity="center"
+                        android:text="@string/cap_plus"
+                        android:visibility="invisible"
+                        tools:layout_editor_absoluteX="8dp"
+                        tools:layout_editor_absoluteY="8dp" />
+
+                    <TextView
+                        android:id="@+id/lblWinCentesimi"
+                        android:layout_width="match_parent"
+                        android:layout_height="36dp"
+                        android:layout_gravity="center"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="@string/cap_controller_digit_default"
+                        android:textSize="30sp" />
+
+                    <Button
+                        android:id="@+id/btnWinRemCentesimi"
+                        android:layout_width="match_parent"
+                        android:layout_height="36dp"
+                        android:layout_weight="1"
+                        android:background="@color/bgctrlColor"
+                        android:gravity="center"
+                        android:text="@string/cap_minus"
+                        android:visibility="invisible"
+                        tools:layout_editor_absoluteX="8dp"
+                        tools:layout_editor_absoluteY="8dp" />
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/btnAddWinning"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:layout_marginBottom="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_weight="1"
+                android:text="@string/cap_collect"
+                android:background="@color/bgctrlColor"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+</LinearLayout>
