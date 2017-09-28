@@ -25,13 +25,14 @@ public class MainActivity extends AppCompatActivity {
 
     static final String TAGPaid = "PAID";
     static final String TAGWinning = "WINNING";
+    public static final String ERR_ABOVE = "Impossibile andare oltre il 9";
+    public static final String ERR_BELOW = "Impossibile andare oltre lo 0";
+    public static final String ZERO = "0";
 
     SharedPreferences sp;
     final static String SP_BAL = "SP_BAL";
     final static String SP_PAY = "SP_PAY";
     final static String SP_WIN = "SP_WIN";
-    String FILENAME = "values";
-    final static String SEP = "-";
 
     boolean isPaidControllerVisible = false;
     boolean isWinningControllerVisible = false;
@@ -242,11 +243,11 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     toWin = new Numero();
 
-                    mLblWinCentinaia.setText("0");
-                    mLblWinDecine.setText("0");
-                    mLblWinUnita.setText("0");
-                    mLblWinDecimi.setText("0");
-                    mLblWinCentesimi.setText("0");
+                    mLblWinCentinaia.setText(ZERO);
+                    mLblWinDecine.setText(ZERO);
+                    mLblWinUnita.setText(ZERO);
+                    mLblWinDecimi.setText(ZERO);
+                    mLblWinCentesimi.setText(ZERO);
                 }
                 isWinningControllerVisible = !isWinningControllerVisible;
                 setControllerVisible(TAGWinning, isWinningControllerVisible);
@@ -261,7 +262,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (toPay.getCentinaia() > 8) {
-                    Log.e(TAG, "Impossibile andare oltre il 9");
+                    Log.e(TAG, ERR_ABOVE);
                 } else {
                     toPay.addCentinaia();
                     mLblPayCentinaia.setText(String.valueOf(toPay.getCentinaia()));
@@ -274,7 +275,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (toPay.getCentinaia() < 1) {
-                    Log.e(TAG, "Impossibile andare oltre lo 0");
+                    Log.e(TAG, ERR_BELOW);
                 } else {
                     toPay.remCentinaia();
                     mLblPayCentinaia.setText(String.valueOf(toPay.getCentinaia()));
@@ -287,7 +288,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (toPay.getDecine() > 8) {
-                    Log.e(TAG, "Impossibile andare oltre il 9");
+                    Log.e(TAG, ERR_ABOVE);
                 } else {
                     toPay.addDecine();
                     mLblPayDecine.setText(String.valueOf(toPay.getDecine()));
@@ -300,7 +301,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (toPay.getDecine() < 1) {
-                    Log.e(TAG, "Impossibile andare oltre lo 0");
+                    Log.e(TAG, ERR_BELOW);
                 } else {
                     toPay.remDecine();
                     mLblPayDecine.setText(String.valueOf(toPay.getDecine()));
@@ -313,7 +314,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (toPay.getUnita() > 8) {
-                    Log.e(TAG, "Impossibile andare oltre il 9");
+                    Log.e(TAG, ERR_ABOVE);
                 } else {
                     toPay.addUnita();
                     mLblPayUnita.setText(String.valueOf(toPay.getUnita()));
@@ -326,7 +327,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (toPay.getUnita() < 1) {
-                    Log.e(TAG, "Impossibile andare oltre lo 0");
+                    Log.e(TAG, ERR_BELOW);
                 } else {
                     toPay.remUnita();
                     mLblPayUnita.setText(String.valueOf(toPay.getUnita()));
@@ -339,7 +340,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (toPay.getDecimi() > 8) {
-                    Log.e(TAG, "Impossibile andare oltre il 9");
+                    Log.e(TAG, ERR_ABOVE);
                 } else {
                     toPay.addDecimi();
                     mLblPayDecimi.setText(String.valueOf(toPay.getDecimi()));
@@ -352,7 +353,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (toPay.getDecimi() < 1) {
-                    Log.e(TAG, "Impossibile andare oltre lo 0");
+                    Log.e(TAG, ERR_BELOW);
                 } else {
                     toPay.remDecimi();
                     mLblPayDecimi.setText(String.valueOf(toPay.getDecimi()));
@@ -365,7 +366,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (toPay.getCentesimi() > 8) {
-                    Log.e(TAG, "Impossibile andare oltre il 9");
+                    Log.e(TAG, ERR_ABOVE);
                 } else {
                     toPay.addCentesimi();
                     mLblPayCentesimi.setText(String.valueOf(toPay.getCentesimi()));
@@ -378,7 +379,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (toPay.getCentesimi() < 1) {
-                    Log.e(TAG, "Impossibile andare oltre lo 0");
+                    Log.e(TAG, ERR_BELOW);
                 } else {
                     toPay.remCentesimi();
                     mLblPayCentesimi.setText(String.valueOf(toPay.getCentesimi()));
@@ -395,7 +396,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (toWin.getCentinaia() > 8) {
-                    Log.e(TAG, "Impossibile andare oltre il 9");
+                    Log.e(TAG, ERR_ABOVE);
                 } else {
                     toWin.addCentinaia();
                     mLblWinCentinaia.setText(String.valueOf(toWin.getCentinaia()));
@@ -408,7 +409,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (toWin.getCentinaia() < 1) {
-                    Log.e(TAG, "Impossibile andare oltre lo 0");
+                    Log.e(TAG, ERR_BELOW);
                 } else {
                     toWin.remCentinaia();
                     mLblWinCentinaia.setText(String.valueOf(toWin.getCentinaia()));
@@ -421,7 +422,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (toWin.getDecine() > 8) {
-                    Log.e(TAG, "Impossibile andare oltre il 9");
+                    Log.e(TAG, ERR_ABOVE);
                 } else {
                     toWin.addDecine();
                     mLblWinDecine.setText(String.valueOf(toWin.getDecine()));
@@ -434,7 +435,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (toWin.getDecine() < 1) {
-                    Log.e(TAG, "Impossibile andare oltre lo 0");
+                    Log.e(TAG, ERR_BELOW);
                 } else {
                     toWin.remDecine();
                     mLblWinDecine.setText(String.valueOf(toWin.getDecine()));
@@ -447,7 +448,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (toWin.getUnita() > 8) {
-                    Log.e(TAG, "Impossibile andare oltre il 9");
+                    Log.e(TAG, ERR_ABOVE);
                 } else {
                     toWin.addUnita();
                     mLblWinUnita.setText(String.valueOf(toWin.getUnita()));
@@ -460,7 +461,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (toWin.getUnita() < 1) {
-                    Log.e(TAG, "Impossibile andare oltre lo 0");
+                    Log.e(TAG, ERR_BELOW);
                 } else {
                     toWin.remUnita();
                     mLblWinUnita.setText(String.valueOf(toWin.getUnita()));
@@ -473,7 +474,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (toWin.getDecimi() > 8) {
-                    Log.e(TAG, "Impossibile andare oltre il 9");
+                    Log.e(TAG, ERR_ABOVE);
                 } else {
                     toWin.addDecimi();
                     mLblWinDecimi.setText(String.valueOf(toWin.getDecimi()));
@@ -486,7 +487,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (toWin.getDecimi() < 1) {
-                    Log.e(TAG, "Impossibile andare oltre lo 0");
+                    Log.e(TAG, ERR_BELOW);
                 } else {
                     toWin.remDecimi();
                     mLblWinDecimi.setText(String.valueOf(toWin.getDecimi()));
@@ -499,7 +500,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (toWin.getCentesimi() > 8) {
-                    Log.e(TAG, "Impossibile andare oltre il 9");
+                    Log.e(TAG, ERR_ABOVE);
                 } else {
                     toWin.addCentesimi();
                     mLblWinCentesimi.setText(String.valueOf(toWin.getCentesimi()));
@@ -512,7 +513,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (toWin.getCentesimi() < 1) {
-                    Log.e(TAG, "Impossibile andare oltre lo 0");
+                    Log.e(TAG, ERR_BELOW);
                 } else {
                     toWin.remCentesimi();
                     mLblWinCentesimi.setText(String.valueOf(toWin.getCentesimi()));

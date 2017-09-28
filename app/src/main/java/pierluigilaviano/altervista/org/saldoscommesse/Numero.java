@@ -6,7 +6,7 @@ import android.util.Log;
  * Created by pier on 27/09/17.
  */
 
-public class Numero {
+class Numero {
     private final static int MAX_N = 5;
     public static final String TAG = "SaldoScommesse";
 
@@ -16,11 +16,11 @@ public class Numero {
     private int decimi;
     private int centesimi;
 
-    public Numero() {
+    Numero() {
         this(0, 0, 0, 0, 0);
     }
 
-    public Numero(int centinaia, int decine, int unita, int decimi, int centesimi) {
+    Numero(int centinaia, int decine, int unita, int decimi, int centesimi) {
         this.centinaia = centinaia;
         this.decine = decine;
         this.unita = unita;
@@ -44,87 +44,87 @@ public class Numero {
         this(0, 0, 0, 0, centesimi);
     }
 
-    public void setCentinaia(int centinaia) {
+    private void setCentinaia(int centinaia) {
         this.centinaia = centinaia;
     }
 
-    public void setDecine(int decine) {
+    private void setDecine(int decine) {
         this.decine = decine;
     }
 
-    public void setUnita(int unita) {
+    private void setUnita(int unita) {
         this.unita = unita;
     }
 
-    public void setDecimi(int decimi) {
+    private void setDecimi(int decimi) {
         this.decimi = decimi;
     }
 
-    public void setCentesimi(int centesimi) {
+    private void setCentesimi(int centesimi) {
         this.centesimi = centesimi;
     }
 
-    public int getCentinaia() {
+    int getCentinaia() {
         return centinaia;
     }
 
-    public int getDecine() {
+    int getDecine() {
         return decine;
     }
 
-    public int getUnita() {
+    int getUnita() {
         return unita;
     }
 
-    public int getDecimi() {
+    int getDecimi() {
         return decimi;
     }
 
-    public int getCentesimi() {
+    int getCentesimi() {
         return centesimi;
     }
 
-    public void addCentinaia() {
+    void addCentinaia() {
         centinaia++;
     }
 
-    public void addDecine() {
+    void addDecine() {
         decine++;
     }
 
-    public void addUnita() {
+    void addUnita() {
         unita++;
     }
 
-    public void addDecimi() {
+    void addDecimi() {
         decimi++;
     }
 
-    public void addCentesimi() {
+    void addCentesimi() {
         centesimi++;
     }
 
-    public void remCentinaia() {
+    void remCentinaia() {
         centinaia--;
     }
 
-    public void remDecine() {
+    void remDecine() {
         decine--;
     }
 
-    public void remUnita() {
+    void remUnita() {
         unita--;
     }
 
-    public void remDecimi() {
+    void remDecimi() {
         decimi--;
     }
 
-    public void remCentesimi() {
+    void remCentesimi() {
         centesimi--;
     }
 
-    public static double getDouble(Numero n) {
+    static double getDouble(Numero n) {
         int centinaia = Math.abs(n.getCentinaia())*10000;
         int decine = Math.abs(n.getDecine())*1000;
         int unita = Math.abs(n.getUnita())*100;
@@ -143,7 +143,7 @@ public class Numero {
         return d;
     }
 
-    public Numero sumTo(Numero nO) {
+    Numero sumTo(Numero nO) {
         double dT = Numero.getDouble(this);
         double dO = Numero.getDouble(nO);
 
@@ -152,7 +152,7 @@ public class Numero {
         return Numero.getNumero(sum);
     }
 
-    public Numero diffTo(Numero nO) {
+    Numero diffTo(Numero nO) {
         double dT = Numero.getDouble(this);
         double dO = Numero.getDouble(nO);
         double diff = (dT*100 - dO*100)/100;
@@ -160,7 +160,7 @@ public class Numero {
         return Numero.getNumero(diff);
     }
 
-    public static boolean isNegative(Numero n) {
+    static boolean isNegative(Numero n) {
         boolean f = false;
 
         int[] ns = new int[MAX_N];
@@ -179,7 +179,7 @@ public class Numero {
         return f;
     }
 
-    public static Numero getNumero(double d) {
+    static Numero getNumero(double d) {
         int centinaia;
         int decine;
         int unita;
@@ -235,7 +235,7 @@ public class Numero {
         return n;
     }
 
-    public static void empty(Numero n) {
+    static void empty(Numero n) {
         n.setCentinaia(0);
         n.setDecine(0);
         n.setUnita(0);
