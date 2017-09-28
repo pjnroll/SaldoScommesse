@@ -1,11 +1,23 @@
 package pierluigilaviano.altervista.org.saldoscommesse;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.nfc.Tag;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -14,9 +26,17 @@ public class MainActivity extends AppCompatActivity {
     static final String TAGPaid = "PAID";
     static final String TAGWinning = "WINNING";
 
+    SharedPreferences sp;
+    final static String SP_BAL = "SP_BAL";
+    final static String SP_PAY = "SP_PAY";
+    final static String SP_WIN = "SP_WIN";
+    String FILENAME = "values";
+    final static String SEP = "-";
+
     boolean isPaidControllerVisible = false;
     boolean isWinningControllerVisible = false;
 
+    TextView mLblBalSign;
     TextView mLblBalCentinaia;
     TextView mLblBalDecine;
     TextView mLblBalUnita;
@@ -35,30 +55,20 @@ public class MainActivity extends AppCompatActivity {
     TextView mLblWinDecimi;
     TextView mLblWinCentesimi;
 
-    int balCentinaia;
-    int balDecine;
-    int balUnita;
-    int balDecimi;
-    int balCentesimi;
+    private Numero balance;
 
-    int payCentinaia;
-    int payDecine;
-    int payUnita;
-    int payDecimi;
-    int payCentesimi;
+    private Numero pay;
 
+    private Numero toPay;
     int toPayCentinaia;
     int toPayDecine;
     int toPayUnita;
     int toPayDecimi;
     int toPayCentesimi;
 
-    int winCentinaia;
-    int winDecine;
-    int winUnita;
-    int winDecimi;
-    int winCentesimi;
+    private Numero win;
 
+    private Numero toWin;
     int toWinCentinaia;
     int toWinDecine;
     int toWinUnita;
@@ -98,11 +108,24 @@ public class MainActivity extends AppCompatActivity {
         setControllerVisible(TAGPaid, false);
         setControllerVisible(TAGWinning, false);
 
-        balCentinaia = 0;
-        balDecine = 0;
-        balUnita = 0;
-        balDecimi = 0;
-        balCentesimi = 0;
+        balance = new Numero();
+        pay = new Numero();
+        win = new Numero();
+
+        sp = getSharedPreferences(BuildConfig.APPLICATION_ID, Context.MODE_PRIVATE);
+        balance = Numero.getNumero((double) sp.getFloat(SP_BAL, 0));
+        pay = Numero.getNumero((double) sp.getFloat(SP_PAY, 0));
+        win = Numero.getNumero((double) sp.getFloat(SP_WIN, 0));
+
+        /**
+         * Referenzio le label contenenti i valori della sezione Saldo
+         */
+        mLblBalSign = (TextView) findViewById(R.id.lblBalSign);
+        mLblBalCentinaia = (TextView) findViewById(R.id.lblBalCentinaia);
+        mLblBalDecine = (TextView) findViewById(R.id.lblBalDecine);
+        mLblBalUnita = (TextView) findViewById(R.id.lblBalUnita);
+        mLblBalDecimi = (TextView) findViewById(R.id.lblBalDecimi);
+        mLblBalCentesimi = (TextView) findViewById(R.id.lblBalCentesimi);
 
         /**
          * Referenzio le label contenenti i valori della sezione Paga
@@ -113,26 +136,16 @@ public class MainActivity extends AppCompatActivity {
         mLblPayDecimi = (TextView) findViewById(R.id.lblPayDecimi);
         mLblPayCentesimi = (TextView) findViewById(R.id.lblPayCentesimi);
 
+        /**
+         * Referenzio le label contenenti i valori della sezione Riscuoti
+         */
         mLblWinCentinaia = (TextView) findViewById(R.id.lblWinCentinaia);
         mLblWinDecine = (TextView) findViewById(R.id.lblWinDecine);
         mLblWinUnita = (TextView) findViewById(R.id.lblWinUnita);
         mLblWinDecimi = (TextView) findViewById(R.id.lblWinDecimi);
         mLblWinCentesimi = (TextView) findViewById(R.id.lblWinCentesimi);
 
-        /**
-         * Assegno i valori delle label agli attributi interi
-         */
-        toPayCentinaia = Integer.parseInt(mLblPayCentinaia.getText().toString());
-        toPayDecine = Integer.parseInt(mLblPayDecine.getText().toString());
-        toPayUnita = Integer.parseInt(mLblPayUnita.getText().toString());
-        toPayDecimi = Integer.parseInt(mLblPayDecimi.getText().toString());
-        toPayCentesimi = Integer.parseInt(mLblPayCentesimi.getText().toString());
-
-        toWinCentinaia = Integer.parseInt(mLblWinCentinaia.getText().toString());
-        toWinDecine = Integer.parseInt(mLblWinDecine.getText().toString());
-        toWinUnita = Integer.parseInt(mLblWinUnita.getText().toString());
-        toWinDecimi = Integer.parseInt(mLblWinDecimi.getText().toString());
-        toWinCentesimi = Integer.parseInt(mLblWinCentesimi.getText().toString());
+        initialize();
 
         /**
          * Attiva/Disattiva i pulsanti "controller" per la sezione Paga
@@ -142,14 +155,38 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (isPaidControllerVisible) {
-                    addPay();
+                    toPayCentinaia = Integer.parseInt(mLblPayCentinaia.getText().toString());
+                    toPayDecine = Integer.parseInt(mLblPayDecine.getText().toString());
+                    toPayUnita = Integer.parseInt(mLblPayUnita.getText().toString());
+                    toPayDecimi = Integer.parseInt(mLblPayDecimi.getText().toString());
+                    toPayCentesimi = Integer.parseInt(mLblPayCentesimi.getText().toString());
+                    toPay = new Numero(toPayCentinaia, toPayDecine, toPayUnita, toPayDecimi, toPayCentesimi);
 
-                    mLblPayCentinaia.setText(String.valueOf(balCentinaia));
-                    mLblPayDecine.setText(String.valueOf(balDecine));
-                    mLblPayUnita.setText(String.valueOf(balUnita));
-                    mLblPayDecimi.setText(String.valueOf(balDecimi));
-                    mLblPayCentesimi.setText(String.valueOf(balCentesimi));
+                    addPay(toPay);
+                    sp.edit().putFloat(SP_BAL, (float) Numero.getDouble(balance)).putFloat(SP_PAY, (float) Numero.getDouble(pay)).apply();
+
+                    Numero.empty(toPay);
+
+                    int sign = (Numero.isNegative(balance)) ? R.string.cap_minus : R.string.cap_plus;
+                    int color = (Numero.isNegative(balance)) ? R.color.negBal : R.color.posBal;
+
+                    mLblBalSign.setTextColor(getResources().getColor(color));
+                    mLblBalSign.setText(sign);
+                    mLblBalCentinaia.setText(String.valueOf(Math.abs(balance.getCentinaia())));
+                    mLblBalDecine.setText(String.valueOf(Math.abs(balance.getDecine())));
+                    mLblBalUnita.setText(String.valueOf(Math.abs(balance.getUnita())));
+                    mLblBalDecimi.setText(String.valueOf(Math.abs(balance.getDecimi())));
+                    mLblBalCentesimi.setText(String.valueOf(Math.abs(balance.getCentesimi())));
+
+
+                    mLblPayCentinaia.setText(String.valueOf(pay.getCentinaia()));
+                    mLblPayDecine.setText(String.valueOf(pay.getDecine()));
+                    mLblPayUnita.setText(String.valueOf(pay.getUnita()));
+                    mLblPayDecimi.setText(String.valueOf(pay.getDecimi()));
+                    mLblPayCentesimi.setText(String.valueOf(pay.getCentesimi()));
                 } else {
+                    toPay = new Numero();
+
                     mLblPayCentinaia.setText("0");
                     mLblPayDecine.setText("0");
                     mLblPayUnita.setText("0");
@@ -170,7 +207,46 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (isWinningControllerVisible) {
-                    //addWinning();
+                    toWinCentinaia = Integer.parseInt(mLblWinCentinaia.getText().toString());
+                    toWinDecine = Integer.parseInt(mLblWinDecine.getText().toString());
+                    toWinUnita = Integer.parseInt(mLblWinUnita.getText().toString());
+                    toWinDecimi = Integer.parseInt(mLblWinDecimi.getText().toString());
+                    toWinCentesimi = Integer.parseInt(mLblWinCentesimi.getText().toString());
+                    toWin = new Numero(toWinCentinaia, toWinDecine, toWinUnita, toWinDecimi, toWinCentesimi);
+
+                    addWin(toWin);
+
+                    sp.edit().putFloat(SP_BAL, (float) Numero.getDouble(balance)).putFloat(SP_WIN, (float) Numero.getDouble(win)).apply();
+
+                    Numero.empty(toWin);
+
+                    int sign = (Numero.isNegative(balance)) ? R.string.cap_minus : R.string.cap_plus;
+                    int color = (Numero.isNegative(balance)) ? R.color.negBal : R.color.posBal;
+
+                    mLblBalSign.setTextColor(getResources().getColor(color));
+
+                    mLblBalSign.setText(sign);
+                    mLblBalCentinaia.setText(String.valueOf(Math.abs(balance.getCentinaia())));
+                    mLblBalDecine.setText(String.valueOf(Math.abs(balance.getDecine())));
+                    mLblBalUnita.setText(String.valueOf(Math.abs(balance.getUnita())));
+                    mLblBalDecimi.setText(String.valueOf(Math.abs(balance.getDecimi())));
+                    mLblBalCentesimi.setText(String.valueOf(Math.abs(balance.getCentesimi())));
+
+
+                    mLblWinCentinaia.setText(String.valueOf(win.getCentinaia()));
+                    mLblWinDecine.setText(String.valueOf(win.getDecine()));
+                    mLblWinUnita.setText(String.valueOf(win.getUnita()));
+                    mLblWinDecimi.setText(String.valueOf(win.getDecimi()));
+                    mLblWinCentesimi.setText(String.valueOf(win.getCentesimi()));
+
+                } else {
+                    toWin = new Numero();
+
+                    mLblWinCentinaia.setText("0");
+                    mLblWinDecine.setText("0");
+                    mLblWinUnita.setText("0");
+                    mLblWinDecimi.setText("0");
+                    mLblWinCentesimi.setText("0");
                 }
                 isWinningControllerVisible = !isWinningControllerVisible;
                 setControllerVisible(TAGWinning, isWinningControllerVisible);
@@ -184,11 +260,11 @@ public class MainActivity extends AppCompatActivity {
         mBtnPayAddCentinaia.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (toPayCentinaia > 8) {
+                if (toPay.getCentinaia() > 8) {
                     Log.e(TAG, "Impossibile andare oltre il 9");
                 } else {
-                    toPayCentinaia++;
-                    mLblPayCentinaia.setText(String.valueOf(toPayCentinaia));
+                    toPay.addCentinaia();
+                    mLblPayCentinaia.setText(String.valueOf(toPay.getCentinaia()));
                 }
             }
         });
@@ -197,11 +273,11 @@ public class MainActivity extends AppCompatActivity {
         mBtnPayRemCentinaia.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (toPayCentinaia < 1) {
+                if (toPay.getCentinaia() < 1) {
                     Log.e(TAG, "Impossibile andare oltre lo 0");
                 } else {
-                    toPayCentinaia--;
-                    mLblPayCentinaia.setText(String.valueOf(toPayCentinaia));
+                    toPay.remCentinaia();
+                    mLblPayCentinaia.setText(String.valueOf(toPay.getCentinaia()));
                 }
             }
         });
@@ -210,11 +286,11 @@ public class MainActivity extends AppCompatActivity {
         mBtnPayAddDecine.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (toPayDecine > 8) {
+                if (toPay.getDecine() > 8) {
                     Log.e(TAG, "Impossibile andare oltre il 9");
                 } else {
-                    toPayDecine++;
-                    mLblPayDecine.setText(String.valueOf(toPayDecine));
+                    toPay.addDecine();
+                    mLblPayDecine.setText(String.valueOf(toPay.getDecine()));
                 }
             }
         });
@@ -223,11 +299,11 @@ public class MainActivity extends AppCompatActivity {
         mBtnPayRemDecine.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (toPayDecine < 1) {
+                if (toPay.getDecine() < 1) {
                     Log.e(TAG, "Impossibile andare oltre lo 0");
                 } else {
-                    toPayDecine--;
-                    mLblPayDecine.setText(String.valueOf(toPayDecine));
+                    toPay.remDecine();
+                    mLblPayDecine.setText(String.valueOf(toPay.getDecine()));
                 }
             }
         });
@@ -236,11 +312,11 @@ public class MainActivity extends AppCompatActivity {
         mBtnPayAddUnita.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (toPayUnita > 8) {
+                if (toPay.getUnita() > 8) {
                     Log.e(TAG, "Impossibile andare oltre il 9");
                 } else {
-                    toPayUnita++;
-                    mLblPayUnita.setText(String.valueOf(toPayUnita));
+                    toPay.addUnita();
+                    mLblPayUnita.setText(String.valueOf(toPay.getUnita()));
                 }
             }
         });
@@ -249,11 +325,11 @@ public class MainActivity extends AppCompatActivity {
         mBtnPayRemUnita.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (toPayUnita < 1) {
+                if (toPay.getUnita() < 1) {
                     Log.e(TAG, "Impossibile andare oltre lo 0");
                 } else {
-                    toPayUnita--;
-                    mLblPayUnita.setText(String.valueOf(toPayUnita));
+                    toPay.remUnita();
+                    mLblPayUnita.setText(String.valueOf(toPay.getUnita()));
                 }
             }
         });
@@ -262,11 +338,11 @@ public class MainActivity extends AppCompatActivity {
         mBtnPayAddDecimi.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (toPayDecimi > 8) {
+                if (toPay.getDecimi() > 8) {
                     Log.e(TAG, "Impossibile andare oltre il 9");
                 } else {
-                    toPayDecimi++;
-                    mLblPayDecimi.setText(String.valueOf(toPayDecimi));
+                    toPay.addDecimi();
+                    mLblPayDecimi.setText(String.valueOf(toPay.getDecimi()));
                 }
             }
         });
@@ -275,11 +351,11 @@ public class MainActivity extends AppCompatActivity {
         mBtnPayRemDecimi.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (toPayDecimi < 1) {
+                if (toPay.getDecimi() < 1) {
                     Log.e(TAG, "Impossibile andare oltre lo 0");
                 } else {
-                    toPayDecimi--;
-                    mLblPayDecimi.setText(String.valueOf(toPayDecimi));
+                    toPay.remDecimi();
+                    mLblPayDecimi.setText(String.valueOf(toPay.getDecimi()));
                 }
             }
         });
@@ -288,11 +364,11 @@ public class MainActivity extends AppCompatActivity {
         mBtnPayAddCentesimi.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (toPayCentesimi > 8) {
+                if (toPay.getCentesimi() > 8) {
                     Log.e(TAG, "Impossibile andare oltre il 9");
                 } else {
-                    toPayCentesimi++;
-                    mLblPayCentesimi.setText(String.valueOf(toPayCentesimi));
+                    toPay.addCentesimi();
+                    mLblPayCentesimi.setText(String.valueOf(toPay.getCentesimi()));
                 }
             }
         });
@@ -301,11 +377,11 @@ public class MainActivity extends AppCompatActivity {
         mBtnPayRemCentesimi.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (toPayCentesimi < 1) {
+                if (toPay.getCentesimi() < 1) {
                     Log.e(TAG, "Impossibile andare oltre lo 0");
                 } else {
-                    toPayCentesimi--;
-                    mLblPayCentesimi.setText(String.valueOf(toPayCentesimi));
+                    toPay.remCentesimi();
+                    mLblPayCentesimi.setText(String.valueOf(toPay.getCentesimi()));
                 }
             }
         });
@@ -318,11 +394,11 @@ public class MainActivity extends AppCompatActivity {
         mBtnWinAddCentinaia.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (toWinCentinaia > 8) {
+                if (toWin.getCentinaia() > 8) {
                     Log.e(TAG, "Impossibile andare oltre il 9");
                 } else {
-                    toWinCentinaia++;
-                    mLblWinCentinaia.setText(String.valueOf(toWinCentinaia));
+                    toWin.addCentinaia();
+                    mLblWinCentinaia.setText(String.valueOf(toWin.getCentinaia()));
                 }
             }
         });
@@ -331,11 +407,11 @@ public class MainActivity extends AppCompatActivity {
         mBtnWinRemCentinaia.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (toWinCentinaia < 1) {
+                if (toWin.getCentinaia() < 1) {
                     Log.e(TAG, "Impossibile andare oltre lo 0");
                 } else {
-                    toWinCentinaia--;
-                    mLblWinCentinaia.setText(String.valueOf(toWinCentinaia));
+                    toWin.remCentinaia();
+                    mLblWinCentinaia.setText(String.valueOf(toWin.getCentinaia()));
                 }
             }
         });
@@ -344,11 +420,11 @@ public class MainActivity extends AppCompatActivity {
         mBtnWinAddDecine.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (toWinDecine > 8) {
+                if (toWin.getDecine() > 8) {
                     Log.e(TAG, "Impossibile andare oltre il 9");
                 } else {
-                    toWinDecine++;
-                    mLblWinDecine.setText(String.valueOf(toWinDecine));
+                    toWin.addDecine();
+                    mLblWinDecine.setText(String.valueOf(toWin.getDecine()));
                 }
             }
         });
@@ -357,11 +433,11 @@ public class MainActivity extends AppCompatActivity {
         mBtnWinRemDecine.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (toWinDecine < 1) {
+                if (toWin.getDecine() < 1) {
                     Log.e(TAG, "Impossibile andare oltre lo 0");
                 } else {
-                    toWinDecine--;
-                    mLblWinDecine.setText(String.valueOf(toWinDecine));
+                    toWin.remDecine();
+                    mLblWinDecine.setText(String.valueOf(toWin.getDecine()));
                 }
             }
         });
@@ -370,11 +446,11 @@ public class MainActivity extends AppCompatActivity {
         mBtnWinAddUnita.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (toWinUnita > 8) {
+                if (toWin.getUnita() > 8) {
                     Log.e(TAG, "Impossibile andare oltre il 9");
                 } else {
-                    toWinUnita++;
-                    mLblWinUnita.setText(String.valueOf(toWinUnita));
+                    toWin.addUnita();
+                    mLblWinUnita.setText(String.valueOf(toWin.getUnita()));
                 }
             }
         });
@@ -383,11 +459,11 @@ public class MainActivity extends AppCompatActivity {
         mBtnWinRemUnita.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (toWinUnita < 1) {
+                if (toWin.getUnita() < 1) {
                     Log.e(TAG, "Impossibile andare oltre lo 0");
                 } else {
-                    toWinUnita--;
-                    mLblWinUnita.setText(String.valueOf(toWinUnita));
+                    toWin.remUnita();
+                    mLblWinUnita.setText(String.valueOf(toWin.getUnita()));
                 }
             }
         });
@@ -396,11 +472,11 @@ public class MainActivity extends AppCompatActivity {
         mBtnWinAddDecimi.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (toWinDecimi > 8) {
+                if (toWin.getDecimi() > 8) {
                     Log.e(TAG, "Impossibile andare oltre il 9");
                 } else {
-                    toWinDecimi++;
-                    mLblWinDecimi.setText(String.valueOf(toWinDecimi));
+                    toWin.addDecimi();
+                    mLblWinDecimi.setText(String.valueOf(toWin.getDecimi()));
                 }
             }
         });
@@ -409,11 +485,11 @@ public class MainActivity extends AppCompatActivity {
         mBtnWinRemDecimi.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (toWinDecimi < 1) {
+                if (toWin.getDecimi() < 1) {
                     Log.e(TAG, "Impossibile andare oltre lo 0");
                 } else {
-                    toWinDecimi--;
-                    mLblWinDecimi.setText(String.valueOf(toWinDecimi));
+                    toWin.remDecimi();
+                    mLblWinDecimi.setText(String.valueOf(toWin.getDecimi()));
                 }
             }
         });
@@ -422,11 +498,11 @@ public class MainActivity extends AppCompatActivity {
         mBtnWinAddCentesimi.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (toWinCentesimi > 8) {
+                if (toWin.getCentesimi() > 8) {
                     Log.e(TAG, "Impossibile andare oltre il 9");
                 } else {
-                    toWinCentesimi++;
-                    mLblWinCentesimi.setText(String.valueOf(toWinCentesimi));
+                    toWin.addCentesimi();
+                    mLblWinCentesimi.setText(String.valueOf(toWin.getCentesimi()));
                 }
             }
         });
@@ -435,15 +511,44 @@ public class MainActivity extends AppCompatActivity {
         mBtnWinRemCentesimi.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (toWinCentesimi < 1) {
+                if (toWin.getCentesimi() < 1) {
                     Log.e(TAG, "Impossibile andare oltre lo 0");
                 } else {
-                    toWinCentesimi--;
-                    mLblWinCentesimi.setText(String.valueOf(toWinCentesimi));
+                    toWin.remCentesimi();
+                    mLblWinCentesimi.setText(String.valueOf(toWin.getCentesimi()));
                 }
             }
         });
 
+    }
+
+    public void initialize() {
+        /**
+         * Inizializzo le label del Saldo
+         */
+        mLblBalCentinaia.setText(String.valueOf(balance.getCentinaia()));
+        mLblBalDecine.setText(String.valueOf(balance.getDecine()));
+        mLblBalUnita.setText(String.valueOf(balance.getUnita()));
+        mLblBalDecimi.setText(String.valueOf(balance.getDecimi()));
+        mLblBalCentesimi.setText(String.valueOf(balance.getCentesimi()));
+
+        /**
+         * Inizializzo le label del Saldo
+         */
+        mLblPayCentinaia.setText(String.valueOf(pay.getCentinaia()));
+        mLblPayDecine.setText(String.valueOf(pay.getDecine()));
+        mLblPayUnita.setText(String.valueOf(pay.getUnita()));
+        mLblPayDecimi.setText(String.valueOf(pay.getDecimi()));
+        mLblPayCentesimi.setText(String.valueOf(pay.getCentesimi()));
+
+        /**
+         * Inizializzo le label del Saldo
+         */
+        mLblWinCentinaia.setText(String.valueOf(win.getCentinaia()));
+        mLblWinDecine.setText(String.valueOf(win.getDecine()));
+        mLblWinUnita.setText(String.valueOf(win.getUnita()));
+        mLblWinDecimi.setText(String.valueOf(win.getDecimi()));
+        mLblWinCentesimi.setText(String.valueOf(win.getCentesimi()));
     }
 
     void setControllerVisible(String tag, boolean b) {
@@ -483,77 +588,22 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    void addPay() {
-        double pay = (toPayCentinaia *100) +
-                (toPayDecine *10) +
-                (toPayUnita) +
-                (((double)((toPayDecimi) + (toPayCentesimi)))/100);
-        Log.i(TAG, "Da pagare->" + pay);
-        int balBeforeCentinaia = Integer.valueOf(((TextView)findViewById(R.id.lblBalCentinaia)).getText().toString());
-        int balBeforeDecine = Integer.valueOf(((TextView)findViewById(R.id.lblBalDecine)).getText().toString());
-        int balBeforeUnita = Integer.valueOf(((TextView)findViewById(R.id.lblBalUnita)).getText().toString());
-        int balBeforeDecimi = Integer.valueOf(((TextView)findViewById(R.id.lblBalDecimi)).getText().toString());
-        int balBeforeCentesimi = Integer.valueOf(((TextView)findViewById(R.id.lblBalCentesimi)).getText().toString());
-        double balBefore = (balBeforeCentinaia *100) +
-                (balBeforeDecine * 10) +
-                (balBeforeUnita) +
-                ((double) balBeforeDecimi/10) +
-                ((double) balBeforeCentesimi/100);
-        Log.i(TAG, "BalBefore->" + balBefore);
+    void addPay(Numero toPay) {
+        Log.i(TAG, ("balance - toPay->" + Numero.getDouble(balance) + " - " + Numero.getDouble(toPay)));
 
-        double actualBalance = balBefore - pay;
-        Log.i(TAG, "balAfter->" + actualBalance);
+        balance = balance.diffTo(toPay);
+        Log.i("SaldoScommesse", "Saldo->" + Numero.getDouble(balance));
 
-        double absActualBalance = Math.abs(actualBalance);
+        pay = pay.sumTo(toPay);
 
-        int balAfterCentinaia = 0;
-        int balAfterDecine = 0;
-        int balAfterUnita = 0;
-        int balAfterDecimi = 0;
-        int balAfterCentesimi = 0;
+    }
 
-        if (absActualBalance > 99.99) {
-            balAfterCentinaia = ((int)absActualBalance)/100;
-            balAfterDecine = ((int)absActualBalance)/10 -
-                    (balAfterCentinaia *10);
-            balAfterUnita = (int)absActualBalance -
-                    ((balAfterCentinaia *100) + (balAfterDecine *10));
-            balAfterDecimi = ((int)absActualBalance)*10 - ((balAfterCentinaia *1000) + (balAfterDecine *100) + (balAfterUnita *10));
-            balAfterCentesimi = ((int)absActualBalance)*100 - ((balAfterCentinaia*10000) + (balAfterDecine*1000) +
-                    (balAfterUnita *100) + (balAfterDecimi *10));
-        } else if (absActualBalance < 100 && absActualBalance > 9.99) {
-            balAfterDecine = ((int)absActualBalance)/10;
-            balAfterUnita = (int)absActualBalance - (balAfterDecine *10);
-            balAfterDecimi = ((int)absActualBalance) *10 - ((balAfterDecine * 100) + (balAfterUnita *10));
-            balAfterCentesimi = ((int)absActualBalance) *100 - ((balAfterDecine *1000) + (balAfterUnita *100) + (balAfterDecimi *10));
-        } else if (absActualBalance < 10.0 && absActualBalance > 0.99) {
-            balAfterUnita = (int)absActualBalance;
-            Log.i(TAG, "balAfterUnita->" + balAfterUnita);
-            balAfterDecimi = (int)(absActualBalance *10) - (balAfterUnita *10);
-            Log.i(TAG, "balAfterDecimi->" + balAfterDecimi);
-            balAfterCentesimi = ((int)absActualBalance) *100 - ((balAfterUnita *100) + (balAfterDecimi *10));
-            Log.i(TAG, "balAfterCentesimi->" + balAfterCentesimi);
-        } else if (absActualBalance < 1.0 && absActualBalance > 0.09) {
-            balAfterDecimi = (int)absActualBalance *10;
-            balAfterCentesimi = ((int)absActualBalance) *100 - (balAfterDecimi *10);
-        } else if (absActualBalance < 0.1) {
-            balAfterCentesimi = (int)absActualBalance *100;
-        }
+    void addWin(Numero toWin) {
+        Log.i(TAG, ("balance + toWin->" + Numero.getDouble(balance) + " + " + Numero.getDouble(toWin)));
 
-        Log.i(TAG, "Complete->" + balAfterCentinaia + balAfterDecine + balAfterUnita + "." + balAfterDecimi + balAfterCentesimi);
+        balance = balance.sumTo(toWin);
+        Log.i("SaldoScommesse", "Saldo->" + Numero.getDouble(balance));
 
-        ((TextView)findViewById(R.id.lblBalCentinaia)).setText(String.valueOf(balAfterCentinaia));
-        ((TextView)findViewById(R.id.lblBalDecine)).setText(String.valueOf(balAfterDecine));
-        ((TextView)findViewById(R.id.lblBalUnita)).setText(String.valueOf(balAfterUnita));
-        ((TextView)findViewById(R.id.lblBalDecimi)).setText(String.valueOf(balAfterDecimi));
-        ((TextView)findViewById(R.id.lblBalCentesimi)).setText(String.valueOf(balAfterCentesimi));
-
-        /*int balAfterDecine = (int)actualBalance / 10;
-        int balAfterUnita = (int)actualBalance - (balAfterDecine*10);
-        int balAfterDecimi = (int)((actualBalance - ((balAfterDecine*10) + balAfterUnita))*10);
-        //int balAfterCentesimi = (int)((actualBalance - ((balAfterDecine*10) + balAfterUnita))*100);*/
-
-
-        //mLblBalDecine.setText();
+        win = win.sumTo(toWin);
     }
 }
