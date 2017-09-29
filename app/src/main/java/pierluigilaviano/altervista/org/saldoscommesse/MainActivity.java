@@ -2,6 +2,7 @@ package pierluigilaviano.altervista.org.saldoscommesse;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.net.sip.SipAudioCall;
 import android.nfc.Tag;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -149,377 +150,385 @@ public class MainActivity extends AppCompatActivity {
         initialize();
 
         /**
-         * Attiva/Disattiva i pulsanti "controller" per la sezione Paga
+         * Istanzio i pulsanti per attivare/disattivare i Pagamenti e le riscossioni
          */
         mBtnAddPaid = (Button) findViewById(R.id.btnAddPaid);
-        mBtnAddPaid.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (isPaidControllerVisible) {
-                    toPayCentinaia = Integer.parseInt(mLblPayCentinaia.getText().toString());
-                    toPayDecine = Integer.parseInt(mLblPayDecine.getText().toString());
-                    toPayUnita = Integer.parseInt(mLblPayUnita.getText().toString());
-                    toPayDecimi = Integer.parseInt(mLblPayDecimi.getText().toString());
-                    toPayCentesimi = Integer.parseInt(mLblPayCentesimi.getText().toString());
-                    toPay = new Numero(toPayCentinaia, toPayDecine, toPayUnita, toPayDecimi, toPayCentesimi);
-
-                    addPay(toPay);
-                    sp.edit().putFloat(SP_BAL, (float) Numero.getDouble(balance)).putFloat(SP_PAY, (float) Numero.getDouble(pay)).apply();
-
-                    Numero.empty(toPay);
-
-                    int sign = (Numero.isNegative(balance)) ? R.string.cap_minus : R.string.cap_plus;
-                    int color = (Numero.isNegative(balance)) ? R.color.negBal : R.color.posBal;
-
-                    mLblBalSign.setTextColor(getResources().getColor(color));
-                    mLblBalSign.setText(sign);
-                    mLblBalCentinaia.setText(String.valueOf(Math.abs(balance.getCentinaia())));
-                    mLblBalDecine.setText(String.valueOf(Math.abs(balance.getDecine())));
-                    mLblBalUnita.setText(String.valueOf(Math.abs(balance.getUnita())));
-                    mLblBalDecimi.setText(String.valueOf(Math.abs(balance.getDecimi())));
-                    mLblBalCentesimi.setText(String.valueOf(Math.abs(balance.getCentesimi())));
-
-
-                    mLblPayCentinaia.setText(String.valueOf(pay.getCentinaia()));
-                    mLblPayDecine.setText(String.valueOf(pay.getDecine()));
-                    mLblPayUnita.setText(String.valueOf(pay.getUnita()));
-                    mLblPayDecimi.setText(String.valueOf(pay.getDecimi()));
-                    mLblPayCentesimi.setText(String.valueOf(pay.getCentesimi()));
-                } else {
-                    toPay = new Numero();
-
-                    mLblPayCentinaia.setText("0");
-                    mLblPayDecine.setText("0");
-                    mLblPayUnita.setText("0");
-                    mLblPayDecimi.setText("0");
-                    mLblPayCentesimi.setText("0");
-                }
-
-                isPaidControllerVisible = !isPaidControllerVisible;
-                setControllerVisible(TAGPaid, isPaidControllerVisible);
-            }
-        });
-
-        /**
-         * Attiva/Disattiva i pulsanti "controller" per la sezione Riscuoti
-         */
         mBtnAddWinning = (Button) findViewById(R.id.btnAddWinning);
-        mBtnAddWinning.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (isWinningControllerVisible) {
-                    toWinCentinaia = Integer.parseInt(mLblWinCentinaia.getText().toString());
-                    toWinDecine = Integer.parseInt(mLblWinDecine.getText().toString());
-                    toWinUnita = Integer.parseInt(mLblWinUnita.getText().toString());
-                    toWinDecimi = Integer.parseInt(mLblWinDecimi.getText().toString());
-                    toWinCentesimi = Integer.parseInt(mLblWinCentesimi.getText().toString());
-                    toWin = new Numero(toWinCentinaia, toWinDecine, toWinUnita, toWinDecimi, toWinCentesimi);
-
-                    addWin(toWin);
-
-                    sp.edit().putFloat(SP_BAL, (float) Numero.getDouble(balance)).putFloat(SP_WIN, (float) Numero.getDouble(win)).apply();
-
-                    Numero.empty(toWin);
-
-                    int sign = (Numero.isNegative(balance)) ? R.string.cap_minus : R.string.cap_plus;
-                    int color = (Numero.isNegative(balance)) ? R.color.negBal : R.color.posBal;
-
-                    mLblBalSign.setTextColor(getResources().getColor(color));
-
-                    mLblBalSign.setText(sign);
-                    mLblBalCentinaia.setText(String.valueOf(Math.abs(balance.getCentinaia())));
-                    mLblBalDecine.setText(String.valueOf(Math.abs(balance.getDecine())));
-                    mLblBalUnita.setText(String.valueOf(Math.abs(balance.getUnita())));
-                    mLblBalDecimi.setText(String.valueOf(Math.abs(balance.getDecimi())));
-                    mLblBalCentesimi.setText(String.valueOf(Math.abs(balance.getCentesimi())));
-
-
-                    mLblWinCentinaia.setText(String.valueOf(win.getCentinaia()));
-                    mLblWinDecine.setText(String.valueOf(win.getDecine()));
-                    mLblWinUnita.setText(String.valueOf(win.getUnita()));
-                    mLblWinDecimi.setText(String.valueOf(win.getDecimi()));
-                    mLblWinCentesimi.setText(String.valueOf(win.getCentesimi()));
-
-                } else {
-                    toWin = new Numero();
-
-                    mLblWinCentinaia.setText(ZERO);
-                    mLblWinDecine.setText(ZERO);
-                    mLblWinUnita.setText(ZERO);
-                    mLblWinDecimi.setText(ZERO);
-                    mLblWinCentesimi.setText(ZERO);
-                }
-                isWinningControllerVisible = !isWinningControllerVisible;
-                setControllerVisible(TAGWinning, isWinningControllerVisible);
-            }
-        });
 
         /**
-         * Gestione dei tasti + e - dei controller Paga
+         * Istanzio i pulsanti per gestire i Pagamenti
          */
         mBtnPayAddCentinaia = (Button) findViewById(R.id.btnPayAddCentinaia);
-        mBtnPayAddCentinaia.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (toPay.getCentinaia() > 8) {
-                    Log.e(TAG, ERR_ABOVE);
-                } else {
-                    toPay.addCentinaia();
-                    mLblPayCentinaia.setText(String.valueOf(toPay.getCentinaia()));
-                }
-            }
-        });
-
         mBtnPayRemCentinaia = (Button) findViewById(R.id.btnPayRemCentinaia);
-        mBtnPayRemCentinaia.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (toPay.getCentinaia() < 1) {
-                    Log.e(TAG, ERR_BELOW);
-                } else {
-                    toPay.remCentinaia();
-                    mLblPayCentinaia.setText(String.valueOf(toPay.getCentinaia()));
-                }
-            }
-        });
-
         mBtnPayAddDecine = (Button) findViewById(R.id.btnPayAddDecine);
-        mBtnPayAddDecine.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (toPay.getDecine() > 8) {
-                    Log.e(TAG, ERR_ABOVE);
-                } else {
-                    toPay.addDecine();
-                    mLblPayDecine.setText(String.valueOf(toPay.getDecine()));
-                }
-            }
-        });
-
         mBtnPayRemDecine = (Button) findViewById(R.id.btnPayRemDecine);
-        mBtnPayRemDecine.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (toPay.getDecine() < 1) {
-                    Log.e(TAG, ERR_BELOW);
-                } else {
-                    toPay.remDecine();
-                    mLblPayDecine.setText(String.valueOf(toPay.getDecine()));
-                }
-            }
-        });
-
         mBtnPayAddUnita = (Button) findViewById(R.id.btnPayAddUnita);
-        mBtnPayAddUnita.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (toPay.getUnita() > 8) {
-                    Log.e(TAG, ERR_ABOVE);
-                } else {
-                    toPay.addUnita();
-                    mLblPayUnita.setText(String.valueOf(toPay.getUnita()));
-                }
-            }
-        });
-
         mBtnPayRemUnita = (Button) findViewById(R.id.btnPayRemUnita);
-        mBtnPayRemUnita.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (toPay.getUnita() < 1) {
-                    Log.e(TAG, ERR_BELOW);
-                } else {
-                    toPay.remUnita();
-                    mLblPayUnita.setText(String.valueOf(toPay.getUnita()));
-                }
-            }
-        });
-
         mBtnPayAddDecimi = (Button) findViewById(R.id.btnPayAddDecimi);
-        mBtnPayAddDecimi.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (toPay.getDecimi() > 8) {
-                    Log.e(TAG, ERR_ABOVE);
-                } else {
-                    toPay.addDecimi();
-                    mLblPayDecimi.setText(String.valueOf(toPay.getDecimi()));
-                }
-            }
-        });
-
         mBtnPayRemDecimi = (Button) findViewById(R.id.btnPayRemDecimi);
-        mBtnPayRemDecimi.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (toPay.getDecimi() < 1) {
-                    Log.e(TAG, ERR_BELOW);
-                } else {
-                    toPay.remDecimi();
-                    mLblPayDecimi.setText(String.valueOf(toPay.getDecimi()));
-                }
-            }
-        });
-
         mBtnPayAddCentesimi = (Button) findViewById(R.id.btnPayAddCentesimi);
-        mBtnPayAddCentesimi.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (toPay.getCentesimi() > 8) {
-                    Log.e(TAG, ERR_ABOVE);
-                } else {
-                    toPay.addCentesimi();
-                    mLblPayCentesimi.setText(String.valueOf(toPay.getCentesimi()));
-                }
-            }
-        });
-
         mBtnPayRemCentesimi = (Button) findViewById(R.id.btnPayRemCentesimi);
-        mBtnPayRemCentesimi.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (toPay.getCentesimi() < 1) {
-                    Log.e(TAG, ERR_BELOW);
-                } else {
-                    toPay.remCentesimi();
-                    mLblPayCentesimi.setText(String.valueOf(toPay.getCentesimi()));
-                }
-            }
-        });
-
 
         /**
-         * Gestione dei tasti + e - dei controller Riscuoti
+         * Istanzio i pulsanti per gestire le Riscossioni
          */
         mBtnWinAddCentinaia = (Button) findViewById(R.id.btnWinAddCentinaia);
-        mBtnWinAddCentinaia.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (toWin.getCentinaia() > 8) {
-                    Log.e(TAG, ERR_ABOVE);
-                } else {
-                    toWin.addCentinaia();
-                    mLblWinCentinaia.setText(String.valueOf(toWin.getCentinaia()));
-                }
-            }
-        });
-
         mBtnWinRemCentinaia = (Button) findViewById(R.id.btnWinRemCentinaia);
-        mBtnWinRemCentinaia.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (toWin.getCentinaia() < 1) {
-                    Log.e(TAG, ERR_BELOW);
-                } else {
-                    toWin.remCentinaia();
-                    mLblWinCentinaia.setText(String.valueOf(toWin.getCentinaia()));
-                }
-            }
-        });
-
         mBtnWinAddDecine = (Button) findViewById(R.id.btnWinAddDecine);
-        mBtnWinAddDecine.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (toWin.getDecine() > 8) {
-                    Log.e(TAG, ERR_ABOVE);
-                } else {
-                    toWin.addDecine();
-                    mLblWinDecine.setText(String.valueOf(toWin.getDecine()));
-                }
-            }
-        });
-
         mBtnWinRemDecine = (Button) findViewById(R.id.btnWinRemDecine);
-        mBtnWinRemDecine.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (toWin.getDecine() < 1) {
-                    Log.e(TAG, ERR_BELOW);
-                } else {
-                    toWin.remDecine();
-                    mLblWinDecine.setText(String.valueOf(toWin.getDecine()));
-                }
-            }
-        });
-
         mBtnWinAddUnita = (Button) findViewById(R.id.btnWinAddUnita);
-        mBtnWinAddUnita.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (toWin.getUnita() > 8) {
-                    Log.e(TAG, ERR_ABOVE);
-                } else {
-                    toWin.addUnita();
-                    mLblWinUnita.setText(String.valueOf(toWin.getUnita()));
-                }
-            }
-        });
-
         mBtnWinRemUnita = (Button) findViewById(R.id.btnWinRemUnita);
-        mBtnWinRemUnita.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (toWin.getUnita() < 1) {
-                    Log.e(TAG, ERR_BELOW);
-                } else {
-                    toWin.remUnita();
-                    mLblWinUnita.setText(String.valueOf(toWin.getUnita()));
-                }
-            }
-        });
-
         mBtnWinAddDecimi = (Button) findViewById(R.id.btnWinAddDecimi);
-        mBtnWinAddDecimi.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (toWin.getDecimi() > 8) {
-                    Log.e(TAG, ERR_ABOVE);
-                } else {
-                    toWin.addDecimi();
-                    mLblWinDecimi.setText(String.valueOf(toWin.getDecimi()));
-                }
-            }
-        });
-
         mBtnWinRemDecimi = (Button) findViewById(R.id.btnWinRemDecimi);
-        mBtnWinRemDecimi.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (toWin.getDecimi() < 1) {
-                    Log.e(TAG, ERR_BELOW);
-                } else {
-                    toWin.remDecimi();
-                    mLblWinDecimi.setText(String.valueOf(toWin.getDecimi()));
-                }
-            }
-        });
-
         mBtnWinAddCentesimi = (Button) findViewById(R.id.btnWinAddCentesimi);
-        mBtnWinAddCentesimi.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (toWin.getCentesimi() > 8) {
-                    Log.e(TAG, ERR_ABOVE);
-                } else {
-                    toWin.addCentesimi();
-                    mLblWinCentesimi.setText(String.valueOf(toWin.getCentesimi()));
-                }
-            }
-        });
-
         mBtnWinRemCentesimi = (Button) findViewById(R.id.btnWinRemCentesimi);
-        mBtnWinRemCentesimi.setOnClickListener(new View.OnClickListener() {
+
+        View.OnClickListener manager = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (toWin.getCentesimi() < 1) {
-                    Log.e(TAG, ERR_BELOW);
-                } else {
-                    toWin.remCentesimi();
-                    mLblWinCentesimi.setText(String.valueOf(toWin.getCentesimi()));
+                switch (v.getId()) {
+                    /**
+                     * Attiva/Disattiva i pulsanti "controller" per la sezione Paga
+                     */
+                    case (R.id.btnAddPaid): {
+                        if (isPaidControllerVisible) {
+                            toPayCentinaia = Integer.parseInt(mLblPayCentinaia.getText().toString());
+                            toPayDecine = Integer.parseInt(mLblPayDecine.getText().toString());
+                            toPayUnita = Integer.parseInt(mLblPayUnita.getText().toString());
+                            toPayDecimi = Integer.parseInt(mLblPayDecimi.getText().toString());
+                            toPayCentesimi = Integer.parseInt(mLblPayCentesimi.getText().toString());
+                            toPay = new Numero(toPayCentinaia, toPayDecine, toPayUnita, toPayDecimi, toPayCentesimi);
+
+                            addPay(toPay);
+                            sp.edit().putFloat(SP_BAL, (float) Numero.getDouble(balance)).putFloat(SP_PAY, (float) Numero.getDouble(pay)).apply();
+
+                            Numero.empty(toPay);
+
+                            int sign = (Numero.isNegative(balance)) ? R.string.cap_minus : R.string.cap_plus;
+                            int color = (Numero.isNegative(balance)) ? R.color.negBal : R.color.posBal;
+
+                            mLblBalSign.setTextColor(getResources().getColor(color));
+                            mLblBalSign.setText(sign);
+                            mLblBalCentinaia.setText(String.valueOf(Math.abs(balance.getCentinaia())));
+                            mLblBalDecine.setText(String.valueOf(Math.abs(balance.getDecine())));
+                            mLblBalUnita.setText(String.valueOf(Math.abs(balance.getUnita())));
+                            mLblBalDecimi.setText(String.valueOf(Math.abs(balance.getDecimi())));
+                            mLblBalCentesimi.setText(String.valueOf(Math.abs(balance.getCentesimi())));
+
+
+                            mLblPayCentinaia.setText(String.valueOf(pay.getCentinaia()));
+                            mLblPayDecine.setText(String.valueOf(pay.getDecine()));
+                            mLblPayUnita.setText(String.valueOf(pay.getUnita()));
+                            mLblPayDecimi.setText(String.valueOf(pay.getDecimi()));
+                            mLblPayCentesimi.setText(String.valueOf(pay.getCentesimi()));
+                        } else {
+                            toPay = new Numero();
+
+                            mLblPayCentinaia.setText(ZERO);
+                            mLblPayDecine.setText(ZERO);
+                            mLblPayUnita.setText(ZERO);
+                            mLblPayDecimi.setText(ZERO);
+                            mLblPayCentesimi.setText(ZERO);
+                        }
+
+                        isPaidControllerVisible = !isPaidControllerVisible;
+                        setControllerVisible(TAGPaid, isPaidControllerVisible);
+                        break;
+                    }
+
+                    /**
+                     * Attiva/Disattiva i pulsanti "controller" per la sezione Riscuoti
+                     */
+                    case (R.id.btnAddWinning): {
+                        if (isWinningControllerVisible) {
+                            toWinCentinaia = Integer.parseInt(mLblWinCentinaia.getText().toString());
+                            toWinDecine = Integer.parseInt(mLblWinDecine.getText().toString());
+                            toWinUnita = Integer.parseInt(mLblWinUnita.getText().toString());
+                            toWinDecimi = Integer.parseInt(mLblWinDecimi.getText().toString());
+                            toWinCentesimi = Integer.parseInt(mLblWinCentesimi.getText().toString());
+                            toWin = new Numero(toWinCentinaia, toWinDecine, toWinUnita, toWinDecimi, toWinCentesimi);
+
+                            addWin(toWin);
+
+                            sp.edit().putFloat(SP_BAL, (float) Numero.getDouble(balance)).putFloat(SP_WIN, (float) Numero.getDouble(win)).apply();
+
+                            Numero.empty(toWin);
+
+                            int sign = (Numero.isNegative(balance)) ? R.string.cap_minus : R.string.cap_plus;
+                            int color = (Numero.isNegative(balance)) ? R.color.negBal : R.color.posBal;
+
+                            mLblBalSign.setTextColor(getResources().getColor(color));
+
+                            mLblBalSign.setText(sign);
+                            mLblBalCentinaia.setText(String.valueOf(Math.abs(balance.getCentinaia())));
+                            mLblBalDecine.setText(String.valueOf(Math.abs(balance.getDecine())));
+                            mLblBalUnita.setText(String.valueOf(Math.abs(balance.getUnita())));
+                            mLblBalDecimi.setText(String.valueOf(Math.abs(balance.getDecimi())));
+                            mLblBalCentesimi.setText(String.valueOf(Math.abs(balance.getCentesimi())));
+
+
+                            mLblWinCentinaia.setText(String.valueOf(win.getCentinaia()));
+                            mLblWinDecine.setText(String.valueOf(win.getDecine()));
+                            mLblWinUnita.setText(String.valueOf(win.getUnita()));
+                            mLblWinDecimi.setText(String.valueOf(win.getDecimi()));
+                            mLblWinCentesimi.setText(String.valueOf(win.getCentesimi()));
+
+                        } else {
+                            toWin = new Numero();
+
+                            mLblWinCentinaia.setText(ZERO);
+                            mLblWinDecine.setText(ZERO);
+                            mLblWinUnita.setText(ZERO);
+                            mLblWinDecimi.setText(ZERO);
+                            mLblWinCentesimi.setText(ZERO);
+                        }
+                        isWinningControllerVisible = !isWinningControllerVisible;
+                        setControllerVisible(TAGWinning, isWinningControllerVisible);
+                        break;
+                    }
+
+                    /**
+                     * Gestione dei tasti + e - dei controller Paga
+                     */
+                    case (R.id.btnPayAddCentinaia): {
+                        if (toPay.getCentinaia() > 8) {
+                            Log.e(TAG, ERR_ABOVE);
+                        } else {
+                            toPay.addCentinaia();
+                            mLblPayCentinaia.setText(String.valueOf(toPay.getCentinaia()));
+                        }
+                        break;
+                    }
+
+                    case (R.id.btnPayRemCentinaia): {
+                        if (toPay.getCentinaia() < 1) {
+                            Log.e(TAG, ERR_BELOW);
+                        } else {
+                            toPay.remCentinaia();
+                            mLblPayCentinaia.setText(String.valueOf(toPay.getCentinaia()));
+                        }
+                        break;
+                    }
+
+                    case (R.id.btnPayAddDecine): {
+                        if (toPay.getDecine() > 8) {
+                            Log.e(TAG, ERR_ABOVE);
+                        } else {
+                            toPay.addDecine();
+                            mLblPayDecine.setText(String.valueOf(toPay.getDecine()));
+                        }
+                        break;
+                    }
+
+                    case (R.id.btnPayRemDecine): {
+                        if (toPay.getDecine() < 1) {
+                            Log.e(TAG, ERR_BELOW);
+                        } else {
+                            toPay.remDecine();
+                            mLblPayDecine.setText(String.valueOf(toPay.getDecine()));
+                        }
+                        break;
+                    }
+
+                    case (R.id.btnPayAddUnita): {
+                        if (toPay.getUnita() > 8) {
+                            Log.e(TAG, ERR_ABOVE);
+                        } else {
+                            toPay.addUnita();
+                            mLblPayUnita.setText(String.valueOf(toPay.getUnita()));
+                        }
+                        break;
+                    }
+
+                    case (R.id.btnPayRemUnita): {
+                        if (toPay.getUnita() < 1) {
+                            Log.e(TAG, ERR_BELOW);
+                        } else {
+                            toPay.remUnita();
+                            mLblPayUnita.setText(String.valueOf(toPay.getUnita()));
+                        }
+                        break;
+                    }
+
+                    case (R.id.btnPayAddDecimi): {
+                        if (toPay.getDecimi() > 8) {
+                            Log.e(TAG, ERR_ABOVE);
+                        } else {
+                            toPay.addDecimi();
+                            mLblPayDecimi.setText(String.valueOf(toPay.getDecimi()));
+                        }
+                        break;
+                    }
+
+                    case (R.id.btnPayRemDecimi): {
+                        if (toPay.getDecimi() < 1) {
+                            Log.e(TAG, ERR_BELOW);
+                        } else {
+                            toPay.remDecimi();
+                            mLblPayDecimi.setText(String.valueOf(toPay.getDecimi()));
+                        }
+                        break;
+                    }
+
+                    case (R.id.btnPayAddCentesimi): {
+                        if (toPay.getCentesimi() > 8) {
+                            Log.e(TAG, ERR_ABOVE);
+                        } else {
+                            toPay.addCentesimi();
+                            mLblPayCentesimi.setText(String.valueOf(toPay.getCentesimi()));
+                        }
+                        break;
+                    }
+
+                    case (R.id.btnPayRemCentesimi): {
+                        if (toPay.getCentesimi() < 1) {
+                            Log.e(TAG, ERR_BELOW);
+                        } else {
+                            toPay.remCentesimi();
+                            mLblPayCentesimi.setText(String.valueOf(toPay.getCentesimi()));
+                        }
+                        break;
+                    }
+
+                    /**
+                     * Gestione dei tasti + e - dei controller Riscuoti
+                     */
+                    case (R.id.btnWinAddCentinaia): {
+                        if (toWin.getCentinaia() > 8) {
+                            Log.e(TAG, ERR_ABOVE);
+                        } else {
+                            toWin.addCentinaia();
+                            mLblWinCentinaia.setText(String.valueOf(toWin.getCentinaia()));
+                        }
+                        break;
+                    }
+
+                    case (R.id.btnWinRemCentinaia): {
+                        if (toWin.getCentinaia() < 1) {
+                            Log.e(TAG, ERR_BELOW);
+                        } else {
+                            toWin.remCentinaia();
+                            mLblWinCentinaia.setText(String.valueOf(toWin.getCentinaia()));
+                        }
+                        break;
+                    }
+
+                    case (R.id.btnWinAddDecine): {
+                        if (toWin.getDecine() > 8) {
+                            Log.e(TAG, ERR_ABOVE);
+                        } else {
+                            toWin.addDecine();
+                            mLblWinDecine.setText(String.valueOf(toWin.getDecine()));
+                        }
+                        break;
+                    }
+
+                    case (R.id.btnWinRemDecine): {
+                        if (toWin.getDecine() < 1) {
+                            Log.e(TAG, ERR_BELOW);
+                        } else {
+                            toWin.remDecine();
+                            mLblWinDecine.setText(String.valueOf(toWin.getDecine()));
+                        }
+                        break;
+                    }
+
+                    case (R.id.btnWinAddUnita): {
+                        if (toWin.getUnita() > 8) {
+                            Log.e(TAG, ERR_ABOVE);
+                        } else {
+                            toWin.addUnita();
+                            mLblWinUnita.setText(String.valueOf(toWin.getUnita()));
+                        }
+                        break;
+                    }
+
+                    case (R.id.btnWinRemUnita): {
+                        if (toWin.getUnita() < 1) {
+                            Log.e(TAG, ERR_BELOW);
+                        } else {
+                            toWin.remUnita();
+                            mLblWinUnita.setText(String.valueOf(toWin.getUnita()));
+                        }
+                        break;
+                    }
+
+                    case (R.id.btnWinAddDecimi): {
+                        if (toWin.getDecimi() > 8) {
+                            Log.e(TAG, ERR_ABOVE);
+                        } else {
+                            toWin.addDecimi();
+                            mLblWinDecimi.setText(String.valueOf(toWin.getDecimi()));
+                        }
+
+                        break;
+                    }
+
+                    case (R.id.btnWinRemDecimi): {
+                        if (toWin.getDecimi() < 1) {
+                            Log.e(TAG, ERR_BELOW);
+                        } else {
+                            toWin.remDecimi();
+                            mLblWinDecimi.setText(String.valueOf(toWin.getDecimi()));
+                        }
+                        break;
+                    }
+
+                    case (R.id.btnWinAddCentesimi): {
+                        if (toWin.getCentesimi() > 8) {
+                            Log.e(TAG, ERR_ABOVE);
+                        } else {
+                            toWin.addCentesimi();
+                            mLblWinCentesimi.setText(String.valueOf(toWin.getCentesimi()));
+                        }
+                        break;
+                    }
+
+                    case (R.id.btnWinRemCentesimi): {
+                        if (toWin.getCentesimi() < 1) {
+                            Log.e(TAG, ERR_BELOW);
+                        } else {
+                            toWin.remCentesimi();
+                            mLblWinCentesimi.setText(String.valueOf(toWin.getCentesimi()));
+                        }
+                        break;
+                    }
+
                 }
             }
-        });
+        };
+
+        setAllListener(manager);
+    }
+
+    private void setAllListener(View.OnClickListener manager) {
+
+        mBtnAddPaid.setOnClickListener(manager);
+        mBtnAddWinning.setOnClickListener(manager);
+
+        mBtnPayAddCentinaia.setOnClickListener(manager);
+        mBtnPayAddDecine.setOnClickListener(manager);
+        mBtnPayAddUnita.setOnClickListener(manager);
+        mBtnPayAddDecimi.setOnClickListener(manager);
+        mBtnPayAddCentesimi.setOnClickListener(manager);
+
+        mBtnPayRemCentinaia.setOnClickListener(manager);
+        mBtnPayRemDecine.setOnClickListener(manager);
+        mBtnPayRemUnita.setOnClickListener(manager);
+        mBtnPayRemDecimi.setOnClickListener(manager);
+        mBtnPayRemCentesimi.setOnClickListener(manager);
+
+        mBtnWinAddCentinaia.setOnClickListener(manager);
+        mBtnWinAddDecine.setOnClickListener(manager);
+        mBtnWinAddUnita.setOnClickListener(manager);
+        mBtnWinAddDecimi.setOnClickListener(manager);
+        mBtnWinAddCentesimi.setOnClickListener(manager);
+
+        mBtnWinRemCentinaia.setOnClickListener(manager);
+        mBtnWinRemDecine.setOnClickListener(manager);
+        mBtnWinRemUnita.setOnClickListener(manager);
+        mBtnWinRemDecimi.setOnClickListener(manager);
+        mBtnWinRemCentesimi.setOnClickListener(manager);
 
     }
 
