@@ -638,15 +638,15 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    void addPay(Numero toPay) {
-        balance = balance.diffTo(toPay);
+    void addPay(Numero numberToPay) {
+        balance = balance.diffTo(numberToPay);
 
-        pay = pay.sumTo(toPay);
+        pay = pay.sumTo(numberToPay);
     }
 
-    void addWin(Numero toWin) {
-        balance = balance.sumTo(toWin);
+    void addWin(Numero numberToWin) {
+        balance = balance.sumTo(numberToWin);
 
-        win = win.sumTo(toWin);
+        win = win.sumTo(numberToWin);
     }
 }

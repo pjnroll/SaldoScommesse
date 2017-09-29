@@ -185,50 +185,86 @@ class Numero {
         int decimi;
         int centesimi;
 
-        Numero n = null;
+        Numero n;
 
         double dAbs = Math.abs(d);
 
+        int TAG_CASE;
         if (dAbs > 99.99) {
-            centinaia = (int)(dAbs/100);
-            decine = ((int)(dAbs/10)) - (centinaia * 10);
-            unita = ((int)dAbs) - ((centinaia * 100) + (decine * 10));
-            decimi = (int) (Math.round((dAbs - (double)((centinaia * 100) + (decine * 10) + unita))*10));
-            centesimi = (int)((dAbs*100) - (((double)centinaia)*100 + ((double)decine)*10 + ((double)unita) + ((double)decimi)/10)*100);
-            if (d < 0) {
-                centinaia = -centinaia;
-            }
-            n = new Numero(centinaia, decine, unita, decimi, centesimi);
+            TAG_CASE = 1;
         } else if (dAbs < 100 && dAbs > 9.99) {
-            decine = (int)(dAbs/10);
-            unita = ((int)(dAbs)) - (decine * 10);
-            decimi = (int)((dAbs - ((decine*10) + unita))*10);
-            centesimi = (int)((dAbs*100) - ((decine*10) + unita + ((double)decimi)/10)*100);
-            if (d < 0) {
-                decine = -decine;
+            TAG_CASE = 2;
+        } else if (dAbs < 10.00 && dAbs > 0.99) {
+            TAG_CASE = 3;
+        } else if (dAbs < 1 && dAbs > 0.09) {
+            TAG_CASE = 4;
+        } else {
+            TAG_CASE = 5;
+        }
+
+
+        switch (TAG_CASE) {
+
+            case 1: {
+                centinaia = (int) (dAbs / 100);
+                decine = ((int) (dAbs / 10)) - (centinaia * 10);
+                unita = ((int) dAbs) - ((centinaia * 100) + (decine * 10));
+                decimi = (int) (Math.round((dAbs - (double) ((centinaia * 100) + (decine * 10) + unita)) * 10));
+                centesimi = (int) ((dAbs * 100) - (((double) centinaia) * 100 + ((double) decine) * 10 + ((double) unita) + ((double) decimi) / 10) * 100);
+                if (d < 0) {
+                    centinaia = -centinaia;
+                }
+                n = new Numero(centinaia, decine, unita, decimi, centesimi);
+                break;
             }
-            n = new Numero(decine, unita, decimi, centesimi);
-        } else if (dAbs < 10.0 && dAbs > 0.99) {
-            unita = (int)(dAbs);
-            decimi = (int)((dAbs - unita) * 10);
-            centesimi = (int)((dAbs*100 - ((unita*100) + (decimi*10))));
-            if (d < 0) {
-                unita = -unita;
+
+            case 2: {
+                decine = (int) (dAbs / 10);
+                unita = ((int) (dAbs)) - (decine * 10);
+                decimi = (int) ((dAbs - ((decine * 10) + unita)) * 10);
+                centesimi = (int) ((dAbs * 100) - ((decine * 10) + unita + ((double) decimi) / 10) * 100);
+                if (d < 0) {
+                    decine = -decine;
+                }
+                n = new Numero(decine, unita, decimi, centesimi);
+                break;
             }
-            n = new Numero(unita, decimi, centesimi);
-        } else if (dAbs < 1.0 && dAbs > 0.09) {
-            decimi = (int) (dAbs * 10);
-            centesimi = (int) ((dAbs*100) - decimi*10);
-            if (d < 0) {
-                decimi = -decimi;
+
+            case 3: {
+                unita = (int) (dAbs);
+                decimi = (int) ((dAbs - unita) * 10);
+                centesimi = (int) ((dAbs * 100 - ((unita * 100) + (decimi * 10))));
+                if (d < 0) {
+                    unita = -unita;
+                }
+                n = new Numero(unita, decimi, centesimi);
+                break;
             }
-            n = new Numero(decimi, centesimi);
-        } else if (dAbs < 0.1) {
-            centesimi = (int)(dAbs*100);
-            if (d < 0) {
-                centesimi = -centesimi;
+
+            case 4: {
+                decimi = (int) (dAbs * 10);
+                centesimi = (int) ((dAbs * 100) - decimi * 10);
+                if (d < 0) {
+                    decimi = -decimi;
+                }
+                n = new Numero(decimi, centesimi);
+                break;
             }
-            n = new Numero(centesimi);
+
+            case 5: {
+                centesimi = (int) (dAbs * 100);
+                if (d < 0) {
+                    centesimi = -centesimi;
+                }
+                n = new Numero(centesimi);
+                break;
+            }
+
+            default: {
+                n = new Numero();
+                break;
+            }
+
         }
 
         return n;
