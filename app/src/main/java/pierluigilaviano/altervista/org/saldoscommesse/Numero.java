@@ -1,6 +1,5 @@
 package pierluigilaviano.altervista.org.saldoscommesse;
 
-import android.util.Log;
 
 /**
  * Created by pier on 27/09/17.
@@ -140,7 +139,7 @@ class Numero {
             d = -d;
         }
 
-        return d;
+        return (d*100)/100;
     }
 
     Numero sumTo(Numero nO) {
@@ -194,7 +193,7 @@ class Numero {
             centinaia = (int)(dAbs/100);
             decine = ((int)(dAbs/10)) - (centinaia * 10);
             unita = ((int)dAbs) - ((centinaia * 100) + (decine * 10));
-            decimi = (int) ((dAbs - ((centinaia * 100) + (decine * 10) + unita))*10);
+            decimi = (int) (Math.round((dAbs - (double)((centinaia * 100) + (decine * 10) + unita))*10));
             centesimi = (int)((dAbs*100) - (((double)centinaia)*100 + ((double)decine)*10 + ((double)unita) + ((double)decimi)/10)*100);
             if (d < 0) {
                 centinaia = -centinaia;
