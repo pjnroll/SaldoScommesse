@@ -2,13 +2,13 @@
     <string name="app_name">SaldoScommesse</string>
     <string name="cap_paid">SPESO</string>
     <string name="cap_won">VINTO</string>
-    <string name="cap_plus">+</string>
-    <string name="cap_minus">-</string>
     <string name="cap_controller_digit_default">0</string>
     <string name="cap_separator">.</string>
     <string name="cap_pay">PAGA</string>
     <string name="cap_collect">RISCUOTI</string>
     <string name="cap_balance">SALDO</string>
     <string name="cap_balance_value_default">00.00</string>
-
+    <string name="cap_sign_default">+</string>
+    <string name="cap_plus">+</string>
+    <string name="cap_minus">-</string>
 </resources>

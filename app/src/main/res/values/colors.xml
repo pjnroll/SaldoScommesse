@@ -5,4 +5,6 @@
     <color name="bgColor">#c0ffd363</color>
     <color name="bgctrlColor">#c0ffc329</color>
     <color name="colorAccent">#ff4081</color>
+    <color name="negBal">#ce0000</color>
+    <color name="posBal">#00ce00</color>
 </resources>
