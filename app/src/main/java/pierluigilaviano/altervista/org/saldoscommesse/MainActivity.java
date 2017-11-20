@@ -35,30 +35,35 @@ public class MainActivity extends AppCompatActivity {
     TextView mLblWinDecimi;
     TextView mLblWinCentesimi;
 
+    //Numero balance;
     int balCentinaia;
     int balDecine;
     int balUnita;
     int balDecimi;
     int balCentesimi;
 
+    //Numero pay;
     int payCentinaia;
     int payDecine;
     int payUnita;
     int payDecimi;
     int payCentesimi;
 
+    //Numero toPay;
     int toPayCentinaia;
     int toPayDecine;
     int toPayUnita;
     int toPayDecimi;
     int toPayCentesimi;
 
+    //Numero win;
     int winCentinaia;
     int winDecine;
     int winUnita;
     int winDecimi;
     int winCentesimi;
 
+    //Numero toWin;
     int toWinCentinaia;
     int toWinDecine;
     int toWinUnita;
@@ -98,6 +103,7 @@ public class MainActivity extends AppCompatActivity {
         setControllerVisible(TAGPaid, false);
         setControllerVisible(TAGWinning, false);
 
+        //balance = new Numero(0, 0, 0, 0, 0);
         balCentinaia = 0;
         balDecine = 0;
         balUnita = 0;
@@ -122,7 +128,9 @@ public class MainActivity extends AppCompatActivity {
         /**
          * Assegno i valori delle label agli attributi interi
          */
-        toPayCentinaia = Integer.parseInt(mLblPayCentinaia.getText().toString());
+        //TODO Da integrare quando implemento la persistenza
+
+        /*toPayCentinaia = Integer.parseInt(mLblPayCentinaia.getText().toString());
         toPayDecine = Integer.parseInt(mLblPayDecine.getText().toString());
         toPayUnita = Integer.parseInt(mLblPayUnita.getText().toString());
         toPayDecimi = Integer.parseInt(mLblPayDecimi.getText().toString());
@@ -132,7 +140,7 @@ public class MainActivity extends AppCompatActivity {
         toWinDecine = Integer.parseInt(mLblWinDecine.getText().toString());
         toWinUnita = Integer.parseInt(mLblWinUnita.getText().toString());
         toWinDecimi = Integer.parseInt(mLblWinDecimi.getText().toString());
-        toWinCentesimi = Integer.parseInt(mLblWinCentesimi.getText().toString());
+        toWinCentesimi = Integer.parseInt(mLblWinCentesimi.getText().toString());*/
 
         /**
          * Attiva/Disattiva i pulsanti "controller" per la sezione Paga
@@ -155,6 +163,12 @@ public class MainActivity extends AppCompatActivity {
                     mLblPayUnita.setText("0");
                     mLblPayDecimi.setText("0");
                     mLblPayCentesimi.setText("0");
+
+                    balCentinaia = 0;
+                    balDecine = 0;
+                    balUnita = 0;
+                    balDecimi = 0;
+                    balCentesimi = 0;
                 }
 
                 isPaidControllerVisible = !isPaidControllerVisible;
@@ -176,6 +190,7 @@ public class MainActivity extends AppCompatActivity {
                 setControllerVisible(TAGWinning, isWinningControllerVisible);
             }
         });
+
 
         /**
          * Gestione dei tasti + e - dei controller Paga
